@@ -1,0 +1,165 @@
+<html>
+<head>
+    <title>Smart Light - Control Center</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        footer{
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        }
+        .login-container {
+            text-align: center;
+            margin: 100px auto;
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+        .login-container input {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #555;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+        .camara-container {
+            text-align: center;
+        }
+        .camara-container img {
+            display: inline-block;
+            margin: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        #header-right {
+        float: right;
+        text-align: right;
+        }
+        .logout-button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 14px;
+        }
+        .logout-button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Control Center</h1>
+        <span id="welcome-message"></span>
+        <div id="header-right">
+            <button id="logout-button" class="hidden" onclick="logout()">Log out</button>
+        </div>
+    </header>
+    
+    <div id="login-page" class="login-container">
+        <h2>Welcome</h2>
+        <form onsubmit="return login()">
+            <input type="text" placeholder="Username" id="username" required>
+            <input type="password" placeholder="Password" id="password" required>
+            <p class="error-message" id="error-message"></p>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div id="main-page" class="camara-container hidden">
+        <img src="{{ url_for('video_feed1') }}" width="640" height="480">
+        <img src="{{ url_for('video_feed2') }}" width="640" height="480">
+    </div>
+
+    <footer>
+        <p>&copy Smart Light</p>
+    </footer>
+
+    <script>
+        function login() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var users = [
+                { username: "Yuneri", password: "Yuneri123" },
+                { username: "VictorCJ", password: "VictorCJ123" },
+                { username: "Lalo", password: "Lalo123" },
+                { username: "Richo", password: "Richo123" },
+                { username: "Citlali", password: "Citlali123" }
+            ];
+            var authenticated = false;
+            for (var i = 0; i < users.length; i++) {
+                if (username === users[i].username && password === users[i].password) {
+                    authenticated = true;
+                    break;
+                }
+            }
+            if (authenticated) {
+                document.getElementById('login-page').classList.add('hidden');
+                document.getElementById('main-page').classList.remove('hidden');
+                var welcomeMessage = document.getElementById('welcome-message');
+                welcomeMessage.textContent = "Welcome, " + username + "!";
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('username', username);
+                document.getElementById('logout-button').classList.remove('hidden');
+                return false; 
+            } else {
+                var errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = "Usuario o contraseña incorrectos.";
+                return false;
+            }
+        }
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('username');
+            location.reload();
+        }
+
+        var isLoggedIn = localStorage.getItem('loggedIn');
+        if (isLoggedIn === 'true') {
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('main-page').classList.remove('hidden');
+            var welcomeMessage = document.getElementById('welcome-message');
+            welcomeMessage.textContent = "Welcome, " + localStorage.getItem('username') + "!";
+            document.getElementById('logout-button').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
